@@ -11,7 +11,7 @@ An AI-powered tool to generate professional cover letters from job descriptions
 Clone this repository and run the installer:
 
 ```bash
-git clone <your-repo-url>
+git clone git@github.com:Amishk599/cover-me.git
 cd cover-me
 ./install.sh
 ```
