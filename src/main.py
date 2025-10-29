@@ -78,21 +78,20 @@ def validate_inputs(args: argparse.Namespace) -> None:
     # Validate clipboard input if specified
     if args.clipboard:
         try:
-            import pyperclip
-            clipboard_content = pyperclip.paste()
+            # Load config to get clipboard settings
+            import yaml
+            with open("config/config.yaml", 'r') as f:
+                config = yaml.safe_load(f)
             
-            # Check if clipboard is empty
-            if not clipboard_content or not clipboard_content.strip():
-                print("Error: Clipboard is empty. Please copy a job description to the clipboard first.", file=sys.stderr)
-                sys.exit(1)
+            # Use shared clipboard validation
+            from .utils.clipboard import get_and_validate_clipboard, ClipboardError
+            get_and_validate_clipboard(config)
             
-            # Check clipboard size (reasonable limit to avoid issues)
-            if len(clipboard_content) > 50000:  # 50KB limit
-                print("Error: Clipboard content is too large (>50KB). Please use file input for large job descriptions.", file=sys.stderr)
-                sys.exit(1)
-                
-        except ImportError:
-            print("Error: pyperclip module not installed. Install with: pip install pyperclip", file=sys.stderr)
+        except ImportError as e:
+            print(f"Error: {str(e)}", file=sys.stderr)
+            sys.exit(1)
+        except ClipboardError as e:
+            print(f"Error: {str(e)}", file=sys.stderr)
             sys.exit(1)
         except Exception as e:
             print(f"Error: Failed to access clipboard: {str(e)}", file=sys.stderr)

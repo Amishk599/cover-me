@@ -99,24 +99,9 @@ class CoverLetterGenerator:
             Exception: If clipboard access fails or cover letter generation fails
         """
         try:
-            import pyperclip
-        except ImportError:
-            raise ImportError("pyperclip module required for clipboard functionality. Install with: pip install pyperclip")
-        
-        try:
-            # Get content from clipboard
-            job_description = pyperclip.paste()
-            
-            # Validate clipboard content
-            if not job_description or not job_description.strip():
-                raise ValueError("Clipboard is empty. Please copy a job description to the clipboard first.")
-            
-            # Clean and validate the content
-            job_description = job_description.strip()
-            
-            # Check size
-            if len(job_description) > 50000:  # 50KB limit
-                raise ValueError("Clipboard content is too large (>50KB). Please use file input for large job descriptions.")
+            # Use shared clipboard validation
+            from .utils.clipboard import get_and_validate_clipboard, ClipboardError
+            job_description = get_and_validate_clipboard(self.config)
             
             # Generate cover letter using the base generate method
             cover_letter = self.generate(job_description)
@@ -127,11 +112,10 @@ class CoverLetterGenerator:
             
             return cover_letter
             
+        except (ImportError, ClipboardError) as e:
+            raise ValueError(str(e))
         except Exception as e:
-            if "Clipboard" in str(e) or "clipboard" in str(e):
-                raise Exception(f"Clipboard access failed: {str(e)}")
-            else:
-                raise Exception(f"Failed to generate cover letter from clipboard: {str(e)}")
+            raise Exception(f"Failed to generate cover letter from clipboard: {str(e)}")
 
     def generate_from_file(self, job_description_path: str, output_path: Optional[str] = None) -> str:
         """Generate cover letter from a job description file.
