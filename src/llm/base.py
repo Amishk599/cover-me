@@ -2,6 +2,20 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any
 
 
+def mask_api_key(api_key: str) -> str:
+    """Safely display an API key by showing only first 4 and last 4 characters.
+    
+    Args:
+        api_key: The API key to mask
+        
+    Returns:
+        Masked API key string
+    """
+    if not api_key or len(api_key) < 8:
+        return "****"
+    return f"{api_key[:4]}...{api_key[-4:]}"
+
+
 class LLMClient(ABC):
     """Abstract base class for LLM clients."""
     
@@ -36,5 +50,14 @@ class LLMClient(ABC):
         
         Returns:
             True if API key is valid, False otherwise
+        """
+        pass
+    
+    @abstractmethod
+    def get_provider_info(self) -> Dict[str, str]:
+        """Get provider information for display/testing.
+        
+        Returns:
+            Dictionary with provider name, model, and masked API key
         """
         pass

@@ -1,7 +1,7 @@
 import os
 from typing import Dict, Any
 from openai import OpenAI
-from .base import LLMClient
+from .base import LLMClient, mask_api_key
 
 
 class OpenAIClient(LLMClient):
@@ -16,12 +16,12 @@ class OpenAIClient(LLMClient):
         super().__init__(config)
         
         # Initialize OpenAI client
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        if not self.api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
         self.client = OpenAI(
-            api_key=api_key,
+            api_key=self.api_key,
             organization=os.getenv("OPENAI_ORG_ID"),  # Optional
             project=os.getenv("OPENAI_PROJECT_ID"),   # Optional
         )
@@ -93,5 +93,18 @@ Generate a professional cover letter that highlights the most relevant experienc
                 max_tokens=5
             )
             return True
-        except Exception:
+        except Exception as e:
+            print(f"API key validation failed: {str(e)}")
             return False
+    
+    def get_provider_info(self) -> Dict[str, str]:
+        """Get provider information for display/testing.
+        
+        Returns:
+            Dictionary with provider name, model, and masked API key
+        """
+        return {
+            "provider": "OpenAI",
+            "model": self.model,
+            "api_key": mask_api_key(self.api_key) if self.api_key else "Not set"
+        }

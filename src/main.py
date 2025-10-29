@@ -15,11 +15,11 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Generate professional cover letters using AI",
         prog="cover-me",
-        epilog="Examples:\n  python -m src.main --file job_description.txt\n  python -m src.main --clipboard\n  python -m src.main -c --preview"
+        epilog="Examples:\n  python -m src.main --file job_description.txt\n  python -m src.main --clipboard"
     )
     
-    # Input group - mutually exclusive
-    input_group = parser.add_mutually_exclusive_group(required=True)
+    # Input group - mutually exclusive (not required when testing API)
+    input_group = parser.add_mutually_exclusive_group(required=False)
     input_group.add_argument(
         "-f", "--file",
         type=str,
@@ -45,11 +45,12 @@ def create_parser() -> argparse.ArgumentParser:
         help="Enable verbose output"
     )
     
-    # Preview mode (for future phases)
+    
+    # API test mode
     parser.add_argument(
-        "--preview",
+        "--test-api",
         action="store_true",
-        help="Preview the cover letter without saving (display only)"
+        help="Test API connectivity and key validation"
     )
     
     return parser
@@ -127,60 +128,80 @@ def main() -> None:
     try:
         # Setup and validation
         setup_environment()
+        
+        # Handle API test mode
+        if args.test_api:
+            if args.verbose:
+                print("Testing API connectivity...")
+            
+            # Load minimal config for API testing
+            generator = CoverLetterGenerator()
+            provider_info = generator.llm_client.get_provider_info()
+            
+            print(f"Provider: {provider_info['provider']}")
+            print(f"Model: {provider_info['model']}")
+            print(f"API Key: {provider_info['api_key']}")
+            print()
+            
+            if generator.llm_client.validate_api_key():
+                print("✓ API key is valid and working!")
+                return
+            else:
+                print("✗ API key validation failed")
+                sys.exit(1)
+        
+        # Validate inputs for normal operation
+        if not args.file and not args.clipboard:
+            print("Error: Either --file or --clipboard must be specified (or use --test-api)", file=sys.stderr)
+            sys.exit(1)
+            
         validate_inputs(args)
         
         if args.verbose:
-            print("Initializing cover letter generator...")
+            print("✓ Initializing cover letter generator")
         
         # Initialize the cover letter generator
         generator = CoverLetterGenerator()
         
         if args.verbose:
             if args.file:
-                print(f"Loading job description from: {args.file}")
+                print(f"✓ Loading job description from: {args.file}")
             elif args.clipboard:
-                print("Loading job description from clipboard")
+                print("✓ Loading job description from clipboard")
         
         # Generate cover letter
         if args.file:
             cover_letter = generator.generate_from_file(
                 job_description_path=args.file,
-                output_path=args.output if not args.preview else None
+                output_path=args.output
             )
         elif args.clipboard:
             cover_letter = generator.generate_from_clipboard(
-                output_path=args.output if not args.preview else None
+                output_path=args.output
             )
         
         # Display results
-        if args.preview:
-            print("\n" + "="*60)
-            print("COVER LETTER PREVIEW")
-            print("="*60)
-            print(cover_letter)
-            print("="*60)
+        print("\n✓ Cover letter generated successfully!")
+        if args.output:
+            print(f"✓ Saved to: {args.output}")
         else:
-            print("\n✓ Cover letter generated successfully!")
-            if args.output:
-                print(f"✓ Saved to: {args.output}")
-            else:
-                # The generator saves with timestamp, let's show where
-                from datetime import datetime
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                output_dir = "output"  # from config
-                
-                # Determine file extension based on output format
-                try:
-                    import yaml
-                    with open("config/config.yaml", 'r') as f:
-                        config = yaml.safe_load(f)
-                    output_format = config.get("output", {}).get("format", "text")
-                    extension = "pdf" if output_format == "pdf" else "txt"
-                except:
-                    extension = "txt"  # fallback
-                
-                estimated_path = os.path.join(output_dir, f"cover_letter_{timestamp}.{extension}")
-                print(f"✓ Saved to: {estimated_path}")
+            # The generator saves with timestamp, let's show where
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_dir = "output"  # from config
+            
+            # Determine file extension based on output format
+            try:
+                import yaml
+                with open("config/config.yaml", 'r') as f:
+                    config = yaml.safe_load(f)
+                output_format = config.get("output", {}).get("format", "text")
+                extension = "pdf" if output_format == "pdf" else "txt"
+            except:
+                extension = "txt"  # fallback
+            
+            estimated_path = os.path.join(output_dir, f"cover_letter_{timestamp}.{extension}")
+            print(f"✓ Saved to: {estimated_path}")
         
         if args.verbose:
             print("✓ Process completed successfully")

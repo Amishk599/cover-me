@@ -1,7 +1,7 @@
 import os
 from typing import Dict, Any
 from anthropic import Anthropic
-from .base import LLMClient
+from .base import LLMClient, mask_api_key
 
 
 class AnthropicClient(LLMClient):
@@ -16,12 +16,16 @@ class AnthropicClient(LLMClient):
         super().__init__(config)
         
         # Initialize Anthropic client
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable is required")
         
+        # Basic API key format validation
+        if not self.api_key.startswith("sk-ant-"):
+            raise ValueError("Invalid ANTHROPIC_API_KEY format. Should start with 'sk-ant-'")
+        
         self.client = Anthropic(
-            api_key=api_key,
+            api_key=self.api_key,
         )
         
         # Configuration parameters
@@ -96,5 +100,18 @@ Generate a professional cover letter that highlights the most relevant experienc
                 messages=[{"role": "user", "content": "Test"}]
             )
             return True
-        except Exception:
+        except Exception as e:
+            print(f"API key validation failed: {str(e)}")
             return False
+    
+    def get_provider_info(self) -> Dict[str, str]:
+        """Get provider information for display/testing.
+        
+        Returns:
+            Dictionary with provider name, model, and masked API key
+        """
+        return {
+            "provider": "Anthropic",
+            "model": self.model,
+            "api_key": mask_api_key(self.api_key) if self.api_key else "Not set"
+        }
