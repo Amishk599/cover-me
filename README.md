@@ -1,8 +1,8 @@
 # Cover Letter Generator
 
-An AI-powered tool to generate professional cover letters from job descriptions using OpenAI or Anthropic APIs.
+An AI-powered tool to generate professional cover letters from job descriptions
 
-Simply copy a job description from any website, run `cover-me -c`, and get a personalized cover letter in seconds!
+> Simply copy a job description from any website, run `cover-me -c`, and get a personalized cover letter in seconds!
 
 ## Quick Start
 
@@ -47,7 +47,7 @@ These files are used to personalize your cover letters.
 ### 4. Usage
 > **NOTE:** By default generated cover letters will get stored in `Desktop/cover-letters`
 
-Simply copy the job description from any website and run:
+Commands:
 
 ```bash
 # Read job description from clipboard (most common usage)
