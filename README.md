@@ -1,4 +1,4 @@
-# Cover Letter Generator
+# cover-me
 
 An AI-powered tool to generate professional cover letters from job descriptions
 
