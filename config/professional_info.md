@@ -1,3 +1,4 @@
-# Professional Information Template
+# Your Name
 
-This is Amish
+Add your professional information
+Tip: Convert your resume to markdown and add it here.

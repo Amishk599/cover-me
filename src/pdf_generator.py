@@ -166,11 +166,7 @@ class PDFGenerator:
             'applicant_name': '',
             'applicant_email': '',
             'applicant_phone': '',
-            'applicant_address': '',
-            'hiring_manager_name': 'Hiring Manager',
-            'company_name': '',
-            'company_address': '',
-            'position_title': 'Application for Position'
+            'professional_title': ''
         }
         
         # Override with any configured values
