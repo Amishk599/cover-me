@@ -1,7 +1,7 @@
 # LLM Configuration
 llm:
   provider: "anthropic"  # Options: "openai" or "anthropic"
-  model: "claude-3-5-haiku-latest"  # OpenAI models: gpt-4o, gpt-4, gpt-3.5-turbo | Anthropic models: claude-sonnet-4-5, claude-haiku-4-5, claude-3-5-haiku-latest
+  model: "claude-haiku-4-5"  # OpenAI models: gpt-4o-mini | Anthropic models: claude-sonnet-4-5, claude-haiku-4-5, claude-3-5-haiku-latest
   max_tokens: 1000
   temperature: 0.7
 
@@ -10,7 +10,7 @@ llm:
 output:
   format: "pdf"
   save_to_file: true
-  output_dir: "output"
+  output_dir: "~/Desktop/cover-letters"
 
 # Clipboard Configuration
 clipboard:
@@ -20,7 +20,7 @@ clipboard:
 pdf:
   template: "modern_template.html"
   template_variables:
-    applicant_name: "Your Name"
-    applicant_email: "youremail@gmail.com"
-    applicant_phone: "your number or keep it blank"
-    professional_title: "Software Engineer"
+    applicant_name: "your name"
+    applicant_email: "your email"
+    applicant_phone: "your phone number or keep it blank"
+    professional_title: "your professional title"

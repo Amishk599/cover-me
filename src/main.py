@@ -188,17 +188,22 @@ def main() -> None:
             # The generator saves with timestamp, let's show where
             from datetime import datetime
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_dir = "output"  # from config
             
-            # Determine file extension based on output format
+            # Load config to get actual output directory and format
             try:
                 import yaml
-                with open("config/config.yaml", 'r') as f:
+                # Get absolute path to config file relative to script location
+                script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                config_path = os.path.join(script_dir, "config", "config.yaml")
+                with open(config_path, 'r') as f:
                     config = yaml.safe_load(f)
+                output_dir = os.path.expanduser(config.get("output", {}).get("output_dir", "output"))
                 output_format = config.get("output", {}).get("format", "text")
                 extension = "pdf" if output_format == "pdf" else "txt"
             except:
-                extension = "txt"  # fallback
+                # Fallback values if config loading fails
+                output_dir = "output"
+                extension = "txt"
             
             estimated_path = os.path.join(output_dir, f"cover_letter_{timestamp}.{extension}")
             print(f"✓ Saved to: {estimated_path}")

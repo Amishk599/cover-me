@@ -191,7 +191,7 @@ class CoverLetterGenerator:
         else:
             # Generate timestamped filename
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_dir = self.config.get("output", {}).get("output_dir", "output")
+            output_dir = os.path.expanduser(self.config.get("output", {}).get("output_dir", "output"))
             
             # Ensure output directory exists
             os.makedirs(output_dir, exist_ok=True)
