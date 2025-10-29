@@ -21,7 +21,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Generate professional cover letters using AI",
         prog="cover-me",
-        epilog="Example: python -m src.main --file job_description.txt"
+        epilog="Example: python -m src.main --file job_description.txt (outputs PDF by default)"
     )
     
     # Input group - mutually exclusive
@@ -36,7 +36,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-o", "--output",
         type=str,
-        help="Output file path (optional, defaults to timestamped file in output/)"
+        help="Output file path (optional, defaults to timestamped PDF in output/)"
     )
     
     # Verbosity
@@ -139,7 +139,18 @@ def main() -> None:
                 from datetime import datetime
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 output_dir = "output"  # from config
-                estimated_path = os.path.join(output_dir, f"cover_letter_{timestamp}.txt")
+                
+                # Determine file extension based on output format
+                try:
+                    import yaml
+                    with open("config/config.yaml", 'r') as f:
+                        config = yaml.safe_load(f)
+                    output_format = config.get("output", {}).get("format", "text")
+                    extension = "pdf" if output_format == "pdf" else "txt"
+                except:
+                    extension = "txt"  # fallback
+                
+                estimated_path = os.path.join(output_dir, f"cover_letter_{timestamp}.{extension}")
                 print(f"✓ Saved to: {estimated_path}")
         
         if args.verbose:

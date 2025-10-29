@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cover Letter</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1in;
+            @bottom-right {
+                content: "Page " counter(page);
+                font-size: 9pt;
+                color: #666;
+            }
+        }
+        
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .contact-info {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info div {
+            margin-bottom: 2px;
+        }
+        
+        .contact-name {
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        
+        .date {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .recipient {
+            margin-bottom: 30px;
+        }
+        
+        .recipient div {
+            margin-bottom: 2px;
+        }
+        
+        .subject {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .content {
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        
+        .content p {
+            margin-bottom: 12pt;
+        }
+        
+        .closing {
+            margin-bottom: 50px;
+        }
+        
+        .signature {
+            margin-top: 20px;
+        }
+        
+        .company-name {
+            font-weight: bold;
+        }
+        
+        /* Print optimization */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="contact-info">
+            <div class="contact-name">{{ applicant_name }}</div>
+            <div>{{ applicant_email }}</div>
+            <div>{{ applicant_phone }}</div>
+            <div>{{ applicant_address }}</div>
+        </div>
+    </div>
+    
+    <div class="date">
+        {{ date }}
+    </div>
+    
+    <div class="recipient">
+        <div>{{ hiring_manager_name }}</div>
+        <div class="company-name">{{ company_name }}</div>
+        <div>{{ company_address }}</div>
+    </div>
+    
+    <div class="subject">
+        Subject: {{ position_title }}
+    </div>
+    
+    <div class="content">
+        {{ cover_letter_content }}
+    </div>
+    
+    <div class="closing">
+        <div>Sincerely,</div>
+        <div class="signature">{{ applicant_name }}</div>
+    </div>
+</body>
+</html>

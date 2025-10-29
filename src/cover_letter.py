@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from .llm.base import LLMClient
 from .llm.openai_client import OpenAIClient
+from .pdf_generator import PDFGenerator
 
 
 class CoverLetterGenerator:
@@ -25,6 +26,9 @@ class CoverLetterGenerator:
         
         # Initialize LLM client
         self.llm_client = self._create_llm_client()
+        
+        # Initialize PDF generator
+        self.pdf_generator = PDFGenerator()
         
         # Load system prompt and professional info
         self.system_prompt = self._load_file("config/system_prompt.md")
@@ -153,6 +157,8 @@ class CoverLetterGenerator:
         Returns:
             Path where the file was saved
         """
+        output_format = self.config.get("output", {}).get("format", "text")
+        
         if output_path:
             file_path = output_path
         else:
@@ -163,10 +169,50 @@ class CoverLetterGenerator:
             # Ensure output directory exists
             os.makedirs(output_dir, exist_ok=True)
             
-            file_path = os.path.join(output_dir, f"cover_letter_{timestamp}.txt")
+            # Set file extension based on format
+            extension = "pdf" if output_format == "pdf" else "txt"
+            file_path = os.path.join(output_dir, f"cover_letter_{timestamp}.{extension}")
         
-        # Save the cover letter
+        # Save based on format
+        if output_format == "pdf":
+            return self._save_as_pdf(cover_letter, file_path)
+        else:
+            return self._save_as_text(cover_letter, file_path)
+    
+    def _save_as_text(self, cover_letter: str, file_path: str) -> str:
+        """Save cover letter as text file.
+        
+        Args:
+            cover_letter: The generated cover letter text
+            file_path: Path to save the file
+            
+        Returns:
+            Path where the file was saved
+        """
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(cover_letter)
-        
         return file_path
+    
+    def _save_as_pdf(self, cover_letter: str, file_path: str) -> str:
+        """Save cover letter as PDF file.
+        
+        Args:
+            cover_letter: The generated cover letter text
+            file_path: Path to save the PDF
+            
+        Returns:
+            Path where the file was saved
+        """
+        # Get template variables from config
+        template_vars = self.pdf_generator.get_default_template_variables(self.config)
+        
+        # Get template name from config
+        template_name = self.config.get("pdf", {}).get("template", "default_template.html")
+        
+        # Generate PDF
+        return self.pdf_generator.generate_pdf(
+            content=cover_letter,
+            template_variables=template_vars,
+            output_path=file_path,
+            template_name=template_name
+        )

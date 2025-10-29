@@ -13,6 +13,15 @@ cover_letter:
 
 # Output Configuration
 output:
-  format: "text"
+  format: "pdf"
   save_to_file: true
   output_dir: "output"
+
+# PDF Configuration
+pdf:
+  template: "default_template.html"
+  template_variables:
+    applicant_name: "Your Name"
+    applicant_email: "your.email@example.com"
+    applicant_phone: "(555) 123-4567"
+    applicant_address: "Your Address, City, State ZIP"
