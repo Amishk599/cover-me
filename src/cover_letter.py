@@ -4,8 +4,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
-from .llm.base import LLMClient
-from .llm.openai_client import OpenAIClient
+from .llm import create_llm_client
 from .pdf_generator import PDFGenerator
 
 
@@ -73,7 +72,7 @@ class CoverLetterGenerator:
         except FileNotFoundError:
             raise FileNotFoundError(f"Required file not found: {file_path}")
     
-    def _create_llm_client(self) -> LLMClient:
+    def _create_llm_client(self):
         """Create and configure the appropriate LLM client.
         
         Returns:
@@ -82,13 +81,8 @@ class CoverLetterGenerator:
         Raises:
             ValueError: If unsupported LLM provider is specified
         """
-        provider = self.config.get("llm", {}).get("provider", "openai")
         llm_config = self.config.get("llm", {})
-        
-        if provider == "openai":
-            return OpenAIClient(llm_config)
-        else:
-            raise ValueError(f"Unsupported LLM provider: {provider}")
+        return create_llm_client(llm_config)
     
     def generate_from_clipboard(self, output_path: Optional[str] = None) -> str:
         """Generate cover letter from clipboard content.
