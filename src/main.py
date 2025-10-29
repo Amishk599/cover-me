@@ -21,7 +21,7 @@ def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Generate professional cover letters using AI",
         prog="cover-me",
-        epilog="Example: python -m src.main --file job_description.txt (outputs PDF by default)"
+        epilog="Examples:\n  python -m src.main --file job_description.txt\n  python -m src.main --clipboard\n  python -m src.main -c --preview"
     )
     
     # Input group - mutually exclusive
@@ -30,6 +30,11 @@ def create_parser() -> argparse.ArgumentParser:
         "-f", "--file",
         type=str,
         help="Path to file containing job description"
+    )
+    input_group.add_argument(
+        "-c", "--clipboard",
+        action="store_true",
+        help="Read job description from clipboard"
     )
     
     # Output options
@@ -69,6 +74,30 @@ def validate_inputs(args: argparse.Namespace) -> None:
     if args.file and not os.path.isfile(args.file):
         print(f"Error: Job description file not found: {args.file}", file=sys.stderr)
         sys.exit(1)
+    
+    # Validate clipboard input if specified
+    if args.clipboard:
+        try:
+            import pyperclip
+            clipboard_content = pyperclip.paste()
+            
+            # Check if clipboard is empty
+            if not clipboard_content or not clipboard_content.strip():
+                print("Error: Clipboard is empty. Please copy a job description to the clipboard first.", file=sys.stderr)
+                sys.exit(1)
+            
+            # Check clipboard size (reasonable limit to avoid issues)
+            if len(clipboard_content) > 50000:  # 50KB limit
+                print("Error: Clipboard content is too large (>50KB). Please use file input for large job descriptions.", file=sys.stderr)
+                sys.exit(1)
+                
+        except ImportError:
+            print("Error: pyperclip module not installed. Install with: pip install pyperclip", file=sys.stderr)
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error: Failed to access clipboard: {str(e)}", file=sys.stderr)
+            print("Clipboard functionality may not be available on this system.", file=sys.stderr)
+            sys.exit(1)
     
     # Check if required configuration files exist
     required_files = [
@@ -114,12 +143,19 @@ def main() -> None:
         generator = CoverLetterGenerator()
         
         if args.verbose:
-            print(f"Loading job description from: {args.file}")
+            if args.file:
+                print(f"Loading job description from: {args.file}")
+            elif args.clipboard:
+                print("Loading job description from clipboard")
         
         # Generate cover letter
         if args.file:
             cover_letter = generator.generate_from_file(
                 job_description_path=args.file,
+                output_path=args.output if not args.preview else None
+            )
+        elif args.clipboard:
+            cover_letter = generator.generate_from_clipboard(
                 output_path=args.output if not args.preview else None
             )
         

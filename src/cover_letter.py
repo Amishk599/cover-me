@@ -90,6 +90,55 @@ class CoverLetterGenerator:
         else:
             raise ValueError(f"Unsupported LLM provider: {provider}")
     
+    def generate_from_clipboard(self, output_path: Optional[str] = None) -> str:
+        """Generate cover letter from clipboard content.
+        
+        Args:
+            output_path: Optional path to save the generated cover letter
+            
+        Returns:
+            Generated cover letter text
+            
+        Raises:
+            ImportError: If pyperclip module is not installed
+            ValueError: If clipboard is empty or invalid
+            Exception: If clipboard access fails or cover letter generation fails
+        """
+        try:
+            import pyperclip
+        except ImportError:
+            raise ImportError("pyperclip module required for clipboard functionality. Install with: pip install pyperclip")
+        
+        try:
+            # Get content from clipboard
+            job_description = pyperclip.paste()
+            
+            # Validate clipboard content
+            if not job_description or not job_description.strip():
+                raise ValueError("Clipboard is empty. Please copy a job description to the clipboard first.")
+            
+            # Clean and validate the content
+            job_description = job_description.strip()
+            
+            # Check size
+            if len(job_description) > 50000:  # 50KB limit
+                raise ValueError("Clipboard content is too large (>50KB). Please use file input for large job descriptions.")
+            
+            # Generate cover letter using the base generate method
+            cover_letter = self.generate(job_description)
+            
+            # Save to file if output path specified or if configured to save
+            if output_path or self.config.get("output", {}).get("save_to_file", True):
+                self._save_cover_letter(cover_letter, output_path)
+            
+            return cover_letter
+            
+        except Exception as e:
+            if "Clipboard" in str(e) or "clipboard" in str(e):
+                raise Exception(f"Clipboard access failed: {str(e)}")
+            else:
+                raise Exception(f"Failed to generate cover letter from clipboard: {str(e)}")
+
     def generate_from_file(self, job_description_path: str, output_path: Optional[str] = None) -> str:
         """Generate cover letter from a job description file.
         
