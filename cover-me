@@ -24,7 +24,16 @@ find_script_dir() {
 
 # Function to find the project root
 find_project_root() {
-    # If this script is installed in PATH, we need to find the actual project
+    # This placeholder will be replaced during installation with the actual project directory
+    local embedded_project_dir="PROJECT_DIR_PLACEHOLDER"
+    
+    # If we have an embedded project directory and it's valid, use it
+    if [ "$embedded_project_dir" != "PROJECT_DIR_PLACEHOLDER" ] && [ -f "$embedded_project_dir/src/main.py" ]; then
+        echo "$embedded_project_dir"
+        return 0
+    fi
+    
+    # Fallback: If this script is installed in PATH, we need to find the actual project
     # First, try to find it relative to script location
     local script_dir="$(find_script_dir)"
     
@@ -34,7 +43,7 @@ find_project_root() {
         return 0
     fi
     
-    # Common installation locations to check
+    # Common installation locations to check (fallback for manual installations)
     local common_paths=(
         "$HOME/cover-me"
         "$HOME/projects/cover-me" 

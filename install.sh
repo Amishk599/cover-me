@@ -82,20 +82,37 @@ install_cover_me() {
     # Determine installation method
     print_status "Determining installation method..."
     
+    # Function to install script with embedded project path
+    install_script() {
+        local target_dir="$1"
+        local script_name="cover-me"
+        
+        # Create a temporary modified version of the script
+        local temp_script=$(mktemp)
+        
+        # Replace the placeholder in the script with the actual project directory
+        sed "s|PROJECT_DIR_PLACEHOLDER|$SCRIPT_DIR|g" "$SCRIPT_DIR/cover-me" > "$temp_script"
+        
+        # Copy the modified script to the target directory
+        cp "$temp_script" "$target_dir/$script_name"
+        chmod +x "$target_dir/$script_name"
+        
+        # Clean up temporary file
+        rm "$temp_script"
+    }
+    
     # Option 1: Install to /usr/local/bin (requires sudo)
     if [ -w "/usr/local/bin" ] || [ "$EUID" -eq 0 ]; then
         INSTALL_DIR="/usr/local/bin"
         print_status "Installing to $INSTALL_DIR (system-wide)"
-        cp "$SCRIPT_DIR/cover-me" "$INSTALL_DIR/"
-        chmod +x "$INSTALL_DIR/cover-me"
+        install_script "$INSTALL_DIR"
         print_success "Installed cover-me to $INSTALL_DIR"
         
     # Option 2: Install to ~/.local/bin (user-only)
     elif [ -d "$HOME/.local/bin" ] || mkdir -p "$HOME/.local/bin" 2>/dev/null; then
         INSTALL_DIR="$HOME/.local/bin"
         print_status "Installing to $INSTALL_DIR (user-only)"
-        cp "$SCRIPT_DIR/cover-me" "$INSTALL_DIR/"
-        chmod +x "$INSTALL_DIR/cover-me"
+        install_script "$INSTALL_DIR"
         print_success "Installed cover-me to $INSTALL_DIR"
         
         # Check if ~/.local/bin is in PATH
@@ -118,8 +135,16 @@ install_cover_me() {
     else
         print_status "Attempting installation with sudo..."
         if command_exists sudo; then
-            sudo cp "$SCRIPT_DIR/cover-me" "/usr/local/bin/"
+            # Create a temporary modified version of the script
+            local temp_script=$(mktemp)
+            sed "s|PROJECT_DIR_PLACEHOLDER|$SCRIPT_DIR|g" "$SCRIPT_DIR/cover-me" > "$temp_script"
+            
+            sudo cp "$temp_script" "/usr/local/bin/cover-me"
             sudo chmod +x "/usr/local/bin/cover-me"
+            
+            # Clean up temporary file
+            rm "$temp_script"
+            
             INSTALL_DIR="/usr/local/bin"
             print_success "Installed cover-me to /usr/local/bin with sudo"
         else
