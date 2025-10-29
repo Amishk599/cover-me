@@ -1,5 +1,3 @@
-"""LLM module with factory pattern for creating LLM clients."""
-
 from typing import Dict, Any
 from .base import LLMClient
 from .openai_client import OpenAIClient

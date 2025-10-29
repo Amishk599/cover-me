@@ -1,7 +1,3 @@
-"""
-Clipboard utility functions for validating and accessing clipboard content.
-"""
-
 from typing import Dict, Any, Optional
 
 

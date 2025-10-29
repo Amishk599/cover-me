@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Cover-Me: Automated Cover Letter Generation Tool
-CLI interface for generating professional cover letters using AI.
-"""
-
 import argparse
 import sys
 import os
