@@ -1,74 +1,81 @@
-# **Amish Singh Kushwaha**
+# **[Your Full Name]**
 
-Phone: +1 (213) 999-8291  
-Email: [amishkushwaha59@gmail.com](mailto:amishkushwaha59@gmail.com)  
-LinkedIn: [linkedin.com/in/amishkushwaha](https://www.linkedin.com/in/amishkushwaha/)  
-Github: [github.com/Amishk599](https://github.com/Amishk599)
+Phone: [Your Phone Number]  
+Email: [your.email@example.com](mailto:your.email@example.com)  
+LinkedIn: [linkedin.com/in/your-profile](https://www.linkedin.com/in/your-profile)  
+GitHub: [github.com/your-username](https://github.com/your-username)
 
 ---
 
 ## **Summary**
 
-AI and Backend Engineer specializing in **agentic systems**, **distributed infrastructure**, and **RAG pipelines**.  
-3+ years of experience delivering **production-grade systems** across startups and enterprise environments (VMware / Broadcom).  
-Expert in designing **scalable Go-based services**, **LLM integration and orchestration**, and **document intelligence pipelines** that reduce cost, latency, and manual effort.
+[Write a compelling 2-3 sentence professional summary highlighting your expertise, years of experience, and key value proposition. Focus on your most relevant skills and achievements.]
 
 ---
 
 ## **Professional Experience**
 
-### **ArceusX** · *San Francisco, CA*  
-**AI Software Engineer (Contract)**  
-*May 2025 – October 2025*
+### **[Company Name]** · *[City, State/Country]*  
+**[Your Job Title]**  
+*[Start Date] – [End Date or Present]*
 
-- Automated Venture Capital due-diligence with **agentic + LLM workflows**, cutting analysis time from hours to under 10 minutes per deal.  
-- Built **Doc2Md Converter** integrating MarkItDown, Docling, LlamaParse, Mistral, Claude, and LandingAI APIs — achieving **3× faster parsing throughput** for pitch decks and investment docs.  
-- Engineered **entity-extraction & research agents** using OpenAI, Perplexity, and LangGraph to eliminate analyst loops.  
-- Built a **RAG-driven Document Q&A engine** with LangChain + vector DBs for **citation-backed deal insights**, improving accuracy and reducing analyst effort.
-
----
-
-### **BlueFunda, Inc.** · *Los Angeles, CA*  
-**AI Engineer (Contract)**  
-*December 2024 – Present*
-
-- Engineered a **multi-LLM chat platform** using Python, Go, and NATS, orchestrating concurrent MCP servers & clients across OpenAI, Anthropic, and Groq.  
-- Built **custom MCP servers** for dynamic integration with SAP services, automating SAP service-generation workflows.  
-- Developed a **RAG pipeline** for the “Talk to Docs” feature — handling document ingestion, embeddings, and vector retrieval to enable **citation-backed, context-aware Q&A**.
+- [Key achievement or responsibility with quantifiable impact]  
+- [Another significant accomplishment with metrics where possible]  
+- [Third major contribution highlighting relevant skills and technologies]  
+- [Fourth bullet point demonstrating value delivered]
 
 ---
 
-### **VMware (now Broadcom)** · *Bangalore, India*  
-**Member of Technical Staff (Full-Time)**  
-*July 2022 – November 2024*
+### **[Previous Company]** · *[City, State/Country]*  
+**[Previous Job Title]**  
+*[Start Date] – [End Date]*
 
-- Designed & owned the **State Cache Manager (SCM)** in Go — a critical state service in AVI Load Balancer, improving concurrent state processing and reducing convergence latency by ~42% in 25K+ virtual service environments.  
-- Refactored legacy SCM logic and APIs from Python to Go, reducing memory footprint by ~30% and improving long-term scalability.
+- [Major accomplishment from this role with quantifiable results]  
+- [Key project or initiative you led or contributed to significantly]  
+- [Technical skills or methodologies you developed/applied]
+
+---
+
+### **[Earlier Company]** · *[City, State/Country]*  
+**[Earlier Job Title]**  
+*[Start Date] – [End Date]*
+
+- [Notable achievement or responsibility from this position]  
+- [Skills developed or technologies mastered during this role]
 
 ---
 
 ## **Technical Skills**
 
-**Programming:** Go, Python, TypeScript, C, C++, SQL  
-**AI / ML & Frameworks:** LangChain, LangGraph, OpenAI, Claude, Model Context Protocol, Ollama, Pydantic AI  
-**Infra / DevOps:** REST API, Docker, NATS, JetStream, gRPC, Redis, PostgreSQL, Minio, FastAPI, Nginx, AWS, Git, GitHub, Postman  
-**Core Competencies:** Agentic AI, Retrieval Augmented Generation (RAG), LLM Orchestration, Microservices, Backend Architecture
+**Programming Languages:** [List your programming languages]  
+**Frameworks & Technologies:** [List frameworks, libraries, and key technologies you use]  
+**Tools & Platforms:** [List development tools, cloud platforms, databases, etc.]  
+**Core Competencies:** [List your main areas of expertise and specialization]
 
 ---
 
-## **Projects**
+## **Projects** (Optional)
 
-### **Docugent**
-- Built an end-to-end **RAG agent** for secure, real-time chat with personal documents using **local LLMs (Ollama)** + LangChain.  
-- Automated **PDF ingestion, chunking, vector embedding**, and **ChromaDB retrieval**, running fully offline without cloud APIs.
+### **[Project Name]**
+- [Brief description of the project and your role]  
+- [Key technologies used and outcomes achieved]
+
+### **[Another Project]**
+- [Description highlighting relevant skills and impact]  
+- [Technical approach and results delivered]
 
 ---
 
 ## **Education**
 
-**Bachelor of Technology (Computer Science)**  
-**SRM Institute of Science and Technology | Chennai, India**  
-*2018 – 2022  | CGPA: 9.5  | WES-verified as U.S. Bachelor’s equivalent*
+**[Degree Type] ([Major/Field of Study])**  
+**[Institution Name] | [City, State/Country]**  
+*[Graduation Year] | [GPA if notable] | [Any relevant honors or certifications]*
 
-## **US Work Authorization**
-Hold a valid work authorization to work in the US. Do NOT require visa sponsorship of any kind.
+---
+
+## **Additional Information** (Optional)
+
+**Work Authorization:** [Include if relevant - e.g., "Authorized to work in [Country] without sponsorship"]  
+**Certifications:** [List any relevant professional certifications]  
+**Languages:** [List languages you speak if relevant to your field]

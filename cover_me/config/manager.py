@@ -125,6 +125,13 @@ class ConfigManager:
             if default_profile_path.exists():
                 shutil.copy2(default_profile_path, self.user_profile_file)
         
+        # Copy default system prompt if user system prompt doesn't exist
+        user_system_prompt = self.user_config_dir / "system_prompt.md"
+        if not user_system_prompt.exists():
+            default_system_prompt_path = self.defaults_dir / "system_prompt.md"
+            if default_system_prompt_path.exists():
+                shutil.copy2(default_system_prompt_path, user_system_prompt)
+        
         # Copy default templates
         default_templates_dir = self.defaults_dir / "templates"
         if default_templates_dir.exists():
