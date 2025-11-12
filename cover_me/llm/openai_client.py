@@ -20,14 +20,10 @@ class OpenAIClient(LLMClient):
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
-        self.client = OpenAI(
-            api_key=self.api_key,
-            organization=os.getenv("OPENAI_ORG_ID"),  # Optional
-            project=os.getenv("OPENAI_PROJECT_ID"),   # Optional
-        )
+        self.client = OpenAI(api_key=self.api_key)
         
         # Configuration parameters
-        self.model = config.get("model", "gpt-4o")
+        self.model = config.get("model", "gpt-4o-mini")
         self.max_tokens = config.get("max_tokens", 1000)
         self.temperature = config.get("temperature", 0.7)
     

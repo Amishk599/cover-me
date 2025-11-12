@@ -36,6 +36,11 @@ pipx ensurepath
 pipx install git+https://github.com/Amishk599/cover-me.git
 ```
 
+#### 🔄 Update to Latest Version
+```bash
+pipx upgrade cover-me
+```
+
 ### 2. 🔑 Set Environment Variables
 
 You must provide **at least one API key** — either **OpenAI** or **Anthropic**.
