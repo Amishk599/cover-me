@@ -43,12 +43,21 @@ class OpenAIClient(LLMClient):
         """Get the appropriate completion parameters for the current model.
         
         Returns:
-            Dictionary with the correct token limit parameter name
+            Dictionary with the correct parameters for the model
         """
+        params = {}
+        
+        # Token limit parameter varies by model
         if self._is_gpt5_model():
-            return {"max_completion_tokens": self.max_tokens}
+            params["max_completion_tokens"] = self.max_tokens
         else:
-            return {"max_tokens": self.max_tokens}
+            params["max_tokens"] = self.max_tokens
+        
+        # Temperature: GPT-5 only supports default (1), older models support custom values
+        if not self._is_gpt5_model():
+            params["temperature"] = self.temperature
+        
+        return params
 
     def generate_cover_letter(self, system_prompt: str, professional_info: str, job_description: str) -> str:
         """Generate a cover letter using OpenAI's API.
@@ -88,7 +97,6 @@ Generate a professional cover letter that highlights the most relevant experienc
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                temperature=self.temperature,
                 **completion_params
             )
             
