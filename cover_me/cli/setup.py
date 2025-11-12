@@ -84,9 +84,9 @@ def select_llm_provider() -> Dict[str, Any]:
             'name': 'OpenAI',
             'models': [
                 ('gpt-4.1-mini', 'GPT-4.1 Mini (Recommended)'),
+                ('gpt-4.1-nano', 'GPT-4.1 Nano (Cheapest)'),
                 ('gpt-4o-mini', 'GPT-4o Mini'),
-                ('gpt-5-mini', 'GPT-5 Mini (Recommended)'),
-                ('gpt-5-nano', 'GPT-5 Nano (Cheapest)')
+                ('gpt-4.1', 'GPT-4.1')
             ]
         },
         'anthropic': {

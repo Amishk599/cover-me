@@ -31,33 +31,6 @@ class OpenAIClient(LLMClient):
         self.max_tokens = config.get("max_tokens", 1000)
         self.temperature = config.get("temperature", 0.7)
     
-    def _is_gpt5_model(self) -> bool:
-        """Check if the current model is a GPT-5 model.
-        
-        Returns:
-            True if using GPT-5, False otherwise
-        """
-        return self.model.startswith('gpt-5')
-    
-    def _get_completion_params(self) -> Dict[str, Any]:
-        """Get the appropriate completion parameters for the current model.
-        
-        Returns:
-            Dictionary with the correct parameters for the model
-        """
-        params = {}
-        
-        # Token limit parameter varies by model
-        if self._is_gpt5_model():
-            params["max_completion_tokens"] = self.max_tokens
-        else:
-            params["max_tokens"] = self.max_tokens
-        
-        # Temperature: GPT-5 only supports default (1), older models support custom values
-        if not self._is_gpt5_model():
-            params["temperature"] = self.temperature
-        
-        return params
 
     def generate_cover_letter(self, system_prompt: str, professional_info: str, job_description: str) -> str:
         """Generate a cover letter using OpenAI's API.
@@ -87,9 +60,6 @@ Please generate a cover letter based on the following information:
 Generate a professional cover letter that highlights the most relevant experience and skills for this position.
 """
             
-            # Get appropriate completion parameters based on model
-            completion_params = self._get_completion_params()
-            
             # Make API call
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -97,7 +67,8 @@ Generate a professional cover letter that highlights the most relevant experienc
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                **completion_params
+                max_tokens=self.max_tokens,
+                temperature=self.temperature
             )
             
             # Extract and return the generated cover letter
