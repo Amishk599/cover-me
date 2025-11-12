@@ -21,7 +21,8 @@ class PDFGenerator:
         content: str,
         template_variables: Dict[str, str],
         output_path: str,
-        template_name: str = "default_template.html"
+        template_path: Optional[str] = None,
+        template_name: Optional[str] = None
     ) -> str:
         """Generate a PDF from HTML template and content.
         
@@ -40,7 +41,12 @@ class PDFGenerator:
         """
         try:
             # Load and process the HTML template
-            html_content = self._load_template(template_name)
+            if template_path:
+                html_content = self._load_template_from_path(template_path)
+            elif template_name:
+                html_content = self._load_template(template_name)
+            else:
+                raise ValueError("Either template_path or template_name must be provided")
             
             # Add the main content to template variables
             template_variables['cover_letter_content'] = self._format_content_as_html(content)
@@ -70,6 +76,27 @@ class PDFGenerator:
         """
         template_path = os.path.join(self.template_dir, template_name)
         
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template file not found: {template_path}")
+        
+        try:
+            with open(template_path, 'r', encoding='utf-8') as file:
+                return file.read()
+        except Exception as e:
+            raise Exception(f"Failed to read template file: {str(e)}")
+    
+    def _load_template_from_path(self, template_path: str) -> str:
+        """Load HTML template from full file path.
+        
+        Args:
+            template_path: Full path to the template file
+            
+        Returns:
+            HTML template content as string
+            
+        Raises:
+            FileNotFoundError: If template file doesn't exist
+        """
         if not os.path.isfile(template_path):
             raise FileNotFoundError(f"Template file not found: {template_path}")
         
@@ -160,16 +187,19 @@ class PDFGenerator:
         # Get current date
         current_date = datetime.now().strftime("%B %d, %Y")
         
-        # Extract template variables from config, with sensible defaults
+        # Extract user information from config
+        user_config = config.get('user', {})
+        
+        # Map config values to template variables
         template_vars = {
             'date': current_date,
-            'applicant_name': '',
-            'applicant_email': '',
-            'applicant_phone': '',
-            'professional_title': ''
+            'applicant_name': user_config.get('name', ''),
+            'applicant_email': user_config.get('email', ''),
+            'applicant_phone': user_config.get('phone', ''),
+            'professional_title': user_config.get('title', '')
         }
         
-        # Override with any configured values
+        # Override with any configured values from pdf.template_variables section
         pdf_config = config.get('pdf', {})
         if 'template_variables' in pdf_config:
             template_vars.update(pdf_config['template_variables'])

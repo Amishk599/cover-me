@@ -20,7 +20,7 @@ clipboard:
 pdf:
   template: "modern_template.html"
   template_variables:
-    applicant_name: "your name"
-    applicant_email: "your email"
-    applicant_phone: "your phone number or keep it blank"
-    professional_title: "your professional title"
+    applicant_name: "Amish Kushwaha"
+    applicant_email: "amishkushwaha59@gmail.com"
+    applicant_phone: "+1 (213) 999-8291"
+    professional_title: "AI & Backend Engineer"
