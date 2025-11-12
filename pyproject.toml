@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cover-me"
-version = "1.0.2"
+version = "1.0.3"
 description = "Generate professional cover letters using AI"
 authors = [{name = "Amish Kushwaha", email = "amishkushwaha59@gmail.com"}]
 license = {text = "MIT"}

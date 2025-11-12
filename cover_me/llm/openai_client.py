@@ -31,6 +31,25 @@ class OpenAIClient(LLMClient):
         self.max_tokens = config.get("max_tokens", 1000)
         self.temperature = config.get("temperature", 0.7)
     
+    def _is_gpt5_model(self) -> bool:
+        """Check if the current model is a GPT-5 model.
+        
+        Returns:
+            True if using GPT-5, False otherwise
+        """
+        return self.model.startswith('gpt-5')
+    
+    def _get_completion_params(self) -> Dict[str, Any]:
+        """Get the appropriate completion parameters for the current model.
+        
+        Returns:
+            Dictionary with the correct token limit parameter name
+        """
+        if self._is_gpt5_model():
+            return {"max_completion_tokens": self.max_tokens}
+        else:
+            return {"max_tokens": self.max_tokens}
+
     def generate_cover_letter(self, system_prompt: str, professional_info: str, job_description: str) -> str:
         """Generate a cover letter using OpenAI's API.
         
@@ -59,6 +78,9 @@ Please generate a cover letter based on the following information:
 Generate a professional cover letter that highlights the most relevant experience and skills for this position.
 """
             
+            # Get appropriate completion parameters based on model
+            completion_params = self._get_completion_params()
+            
             # Make API call
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -66,8 +88,8 @@ Generate a professional cover letter that highlights the most relevant experienc
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_message}
                 ],
-                max_tokens=self.max_tokens,
-                temperature=self.temperature
+                temperature=self.temperature,
+                **completion_params
             )
             
             # Extract and return the generated cover letter
@@ -86,9 +108,11 @@ Generate a professional cover letter that highlights the most relevant experienc
             True if API key is valid, False otherwise
         """
         try:
-            # Make a simple test API call
+            # Use a simple model for validation that supports max_tokens
+            # Avoid using GPT-5 models for validation to keep it simple
+            test_model = "gpt-3.5-turbo"
             response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model=test_model,
                 messages=[{"role": "user", "content": "Test"}],
                 max_tokens=5
             )
