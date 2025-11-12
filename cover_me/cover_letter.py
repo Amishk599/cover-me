@@ -90,9 +90,10 @@ class CoverLetterGenerator:
             ValueError: If clipboard is empty or invalid
             Exception: If clipboard access fails or cover letter generation fails
         """
+        # Use shared clipboard validation
+        from .utils.clipboard import get_and_validate_clipboard, ClipboardError
+        
         try:
-            # Use shared clipboard validation
-            from utils.clipboard import get_and_validate_clipboard, ClipboardError
             job_description = get_and_validate_clipboard(self.config)
             
             # Generate cover letter using the base generate method
