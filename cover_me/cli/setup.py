@@ -83,15 +83,18 @@ def select_llm_provider() -> Dict[str, Any]:
         'openai': {
             'name': 'OpenAI',
             'models': [
-                ('gpt-4o-mini', 'GPT-4o Mini (faster, cheaper)'),
-                ('gpt-4o', 'GPT-4o (more capable)')
+                ('gpt-4.1-mini', 'GPT-4.1 Mini'),
+                ('gpt-4o-mini', 'GPT-4o Mini'),
+                ('gpt-5-mini', 'GPT-5 Mini (Recommended)'),
+                ('gpt-5-nano', 'GPT-5 Nano (Cheapest)')
             ]
         },
         'anthropic': {
             'name': 'Anthropic',
             'models': [
-                ('claude-3-5-haiku-20241022', 'Claude 3.5 Haiku (faster, cheaper)'),
-                ('claude-3-5-sonnet-20241022', 'Claude 3.5 Sonnet (more capable)')
+                ('claude-3-5-haiku-latest', 'Claude 3.5 Haiku (Cheapest)'),
+                ('claude-haiku-4-5-20251001', 'Claude 4.5 Haiku (Recommended)'),
+                ('claude-sonnet-4-5-20250929', 'Claude 4.5 Sonnet')
             ]
         }
     }
