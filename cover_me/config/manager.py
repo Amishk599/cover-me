@@ -3,6 +3,10 @@ import yaml
 import shutil
 from pathlib import Path
 from typing import Dict, Any, Optional
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 
 from ..exceptions import ConfigurationError, ValidationError
 
@@ -17,9 +21,8 @@ class ConfigManager:
         self.user_profile_file = self.user_config_dir / "profile.md"
         self.user_templates_dir = self.user_config_dir / "templates"
         
-        # Installation defaults directory (relative to project root)
-        self.project_root = Path(__file__).parent.parent.parent
-        self.defaults_dir = self.project_root / "defaults"
+        # Installation defaults directory - now inside the package
+        self.defaults_dir = Path(__file__).parent.parent / "defaults"
         
     def ensure_user_config_dir(self) -> None:
         """Create user config directory if it doesn't exist."""
@@ -151,15 +154,10 @@ class ConfigManager:
         """
         default_config_path = self.defaults_dir / "config.yaml"
         if not default_config_path.exists():
-            # Fallback to legacy config location for backwards compatibility during transition
-            legacy_config_path = self.project_root / "config" / "config.yaml"
-            if legacy_config_path.exists():
-                default_config_path = legacy_config_path
-            else:
-                raise ConfigurationError(
-                    "No default configuration found. "
-                    "Please run setup to initialize configuration."
-                )
+            raise ConfigurationError(
+                "No default configuration found. "
+                "Please run setup to initialize configuration."
+            )
         
         try:
             with open(default_config_path, 'r') as f:

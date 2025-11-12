@@ -42,3 +42,6 @@ Issues = "https://github.com/Amishk599/cover-me/issues"
 
 [tool.setuptools.packages.find]
 include = ["cover_me", "cover_me.*"]
+
+[tool.setuptools]
+include-package-data = true
