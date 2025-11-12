@@ -1,27 +1,42 @@
 import os
-import yaml
 from datetime import datetime
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
 
 from .llm import create_llm_client
 from .pdf_generator import PDFGenerator
+from .config import ConfigManager
+from .exceptions import ConfigurationError
 
 
 class CoverLetterGenerator:
     """Main class for generating cover letters."""
     
-    def __init__(self, config_path: str = "config/config.yaml"):
+    def __init__(self):
         """Initialize the cover letter generator.
         
-        Args:
-            config_path: Path to the configuration YAML file
+        Raises:
+            ConfigurationError: If no user configuration is found
         """
         # Load environment variables
         load_dotenv()
         
+        # Initialize configuration manager
+        self.config_manager = ConfigManager()
+        
+        # Check if user config exists, if not provide helpful message
+        if not self.config_manager.has_user_config():
+            raise ConfigurationError(
+                "No configuration found. Run 'cover-me setup' to get started.\n"
+                "This will create your configuration in ~/.cover-me/"
+            )
+        
         # Load configuration
-        self.config = self._load_config(config_path)
+        try:
+            self.config = self.config_manager.load_config()
+            self.config_manager.validate_config(self.config)
+        except ConfigurationError as e:
+            raise ConfigurationError(f"Configuration error: {e}")
         
         # Initialize LLM client
         self.llm_client = self._create_llm_client()
@@ -30,35 +45,15 @@ class CoverLetterGenerator:
         self.pdf_generator = PDFGenerator()
         
         # Load system prompt and professional info
-        self.system_prompt = self._load_file("config/system_prompt.md")
-        self.professional_info = self._load_file("config/professional_info.md")
+        self.system_prompt = self._load_file(self.config_manager.get_system_prompt_path())
+        self.professional_info = self._load_file(self.config_manager.get_profile_path())
     
-    def _load_config(self, config_path: str) -> Dict[str, Any]:
-        """Load configuration from YAML file.
-        
-        Args:
-            config_path: Path to the configuration file
-            
-        Returns:
-            Configuration dictionary
-            
-        Raises:
-            FileNotFoundError: If config file doesn't exist
-            yaml.YAMLError: If config file is invalid YAML
-        """
-        try:
-            with open(config_path, 'r') as file:
-                return yaml.safe_load(file)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Configuration file not found: {config_path}")
-        except yaml.YAMLError as e:
-            raise yaml.YAMLError(f"Invalid YAML in configuration file: {e}")
     
-    def _load_file(self, file_path: str) -> str:
+    def _load_file(self, file_path) -> str:
         """Load content from a text file.
         
         Args:
-            file_path: Path to the file to load
+            file_path: Path to the file to load (Path object or string)
             
         Returns:
             File content as string
@@ -84,12 +79,9 @@ class CoverLetterGenerator:
         llm_config = self.config.get("llm", {})
         return create_llm_client(llm_config)
     
-    def generate_from_clipboard(self, output_path: Optional[str] = None) -> str:
+    def generate_from_clipboard(self) -> str:
         """Generate cover letter from clipboard content.
         
-        Args:
-            output_path: Optional path to save the generated cover letter
-            
         Returns:
             Generated cover letter text
             
@@ -100,15 +92,14 @@ class CoverLetterGenerator:
         """
         try:
             # Use shared clipboard validation
-            from .utils.clipboard import get_and_validate_clipboard, ClipboardError
+            from utils.clipboard import get_and_validate_clipboard, ClipboardError
             job_description = get_and_validate_clipboard(self.config)
             
             # Generate cover letter using the base generate method
             cover_letter = self.generate(job_description)
             
-            # Save to file if output path specified or if configured to save
-            if output_path or self.config.get("output", {}).get("save_to_file", True):
-                self._save_cover_letter(cover_letter, output_path)
+            # Always save the generated cover letter
+            self._save_cover_letter(cover_letter)
             
             return cover_letter
             
@@ -117,30 +108,6 @@ class CoverLetterGenerator:
         except Exception as e:
             raise Exception(f"Failed to generate cover letter from clipboard: {str(e)}")
 
-    def generate_from_file(self, job_description_path: str, output_path: Optional[str] = None) -> str:
-        """Generate cover letter from a job description file.
-        
-        Args:
-            job_description_path: Path to file containing job description
-            output_path: Optional path to save the generated cover letter
-            
-        Returns:
-            Generated cover letter text
-            
-        Raises:
-            FileNotFoundError: If job description file doesn't exist
-        """
-        # Load job description
-        job_description = self._load_file(job_description_path)
-        
-        # Generate cover letter
-        cover_letter = self.generate(job_description)
-        
-        # Save to file if output path specified or if configured to save
-        if output_path or self.config.get("output", {}).get("save_to_file", True):
-            self._save_cover_letter(cover_letter, output_path)
-        
-        return cover_letter
     
     def generate(self, job_description: str) -> str:
         """Generate cover letter from job description text.
@@ -234,12 +201,15 @@ class CoverLetterGenerator:
         template_vars = self.pdf_generator.get_default_template_variables(self.config)
         
         # Get template name from config
-        template_name = self.config.get("pdf", {}).get("template", "default_template.html")
+        template_name = self.config.get("pdf", {}).get("template", "modern_template.html")
+        
+        # Get template path from config manager
+        template_path = self.config_manager.get_template_path(template_name)
         
         # Generate PDF
         return self.pdf_generator.generate_pdf(
             content=cover_letter,
             template_variables=template_vars,
             output_path=file_path,
-            template_name=template_name
+            template_path=str(template_path)
         )

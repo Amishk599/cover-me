@@ -2,107 +2,140 @@
 
 An AI-powered tool to generate professional cover letters from job descriptions
 
-> Simply copy a job description from any website, run `cover-me -c`, and get a personalized cover letter in seconds!
+> Simply copy a job description from any website, run `cover-me`, and get a personalized cover letter in seconds!
 
 ## Quick Start
 
 ### 1. Installation
 
-Clone this repository and run the installer:
+#### Using pipx (Recommended)
 
+pipx is designed for installing Python CLI tools like cover-me.
+
+**Install pipx first:**
 ```bash
-git clone git@github.com:Amishk599/cover-me.git
-cd cover-me
-./install.sh
+# macOS
+brew install pipx
+pipx ensurepath
+
+# Linux/WSL
+python -m pip install --user pipx
+pipx ensurepath
+
+# Windows
+python -m pip install --user pipx
+pipx ensurepath
 ```
 
-The installer will:
-- Install the `cover-me` command system-wide
-- Set up your PATH if needed
-- Guide you through dependency setup
-
-### 2. Set API Key
-
-Add your API key to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
-
+**Install cover-me:**
 ```bash
-# For OpenAI
-export OPENAI_API_KEY="your-openai-api-key-here"
-
-# OR for Anthropic
-export ANTHROPIC_API_KEY="your-anthropic-api-key-here"
+pipx install git+https://github.com/Amishk599/cover-me.git
 ```
 
-Then restart your terminal or run `source ~/.bashrc` (or your shell config file).
+The pipx installation will:
+- Install `cover-me` command system-wide
+- Manage dependencies automatically
+- Keep the tool isolated from your system Python
 
-### 3. Configure Your Details
+### 2. Initial Setup
 
-Update the configuration files with your information:
+Run the interactive setup wizard:
 
-- Edit `config/config.yaml` with your preferences
-- Edit `config/professional_info.md` with your professional details
+```bash
+cover-me setup
+```
 
-These files are used to personalize your cover letters.
+This will guide you through:
+- Choosing your AI provider (OpenAI or Anthropic)
+- Setting up your API key environment variables
+- Configuring your professional information
+- Setting output preferences
 
-### 4. Usage
+Your configuration will be saved to `~/.cover-me/`
+
+### 3. Usage
 > **NOTE:** By default generated cover letters will get stored in `Desktop/cover-letters`
 
 Commands:
 
 ```bash
-# Read job description from clipboard (most common usage)
-cover-me -c
+# Generate cover letter from clipboard (most common usage)
+cover-me
+# or
+cover-me generate
 
-# If the job description is too large for clipboard, save it to a text file and use:
-cover-me -f path/to/jd.txt
+# Configure your settings
+cover-me configure
 
-# Test your API connection
-cover-me --test-api
+# Edit your professional profile
+cover-me profile
 
-# Verbose output
-cover-me -c -v
-
-# Custom output path
-cover-me -c -o path/to/cover_letter.pdf
+# Test your configuration and API connectivity
+cover-me test
 
 # Show all options
 cover-me --help
 ```
 
-## Manual Setup (Alternative)
+## Development Installation (Alternative)
 
 <details>
-<summary>Click to expand manual installation steps</summary>
+<summary>Click to expand development installation steps</summary>
 
-If you prefer not to use the installer:
+For development or if you prefer to install from source:
 
-1. **Create virtual environment:**
+1. **Clone the repository:**
+   ```bash
+   git clone git@github.com:Amishk599/cover-me.git
+   cd cover-me
+   ```
+
+2. **Install in editable mode:**
+   ```bash
+   pip install -e .
+   ```
+
+3. **Or install with pipx from local directory:**
+   ```bash
+   pipx install .
+   ```
+
+4. **Or run directly (legacy method):**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
-   ```
-
-2. **Install dependencies:**
-   ```bash
    pip install -r requirements.txt
-   ```
-
-3. **Run directly:**
-   ```bash
-   python3 -m src.main -c
+   python3 -m src.main
    ```
 
 </details>
 
 ## Configuration
 
-The application uses configuration files in the `config/` directory:
+The application stores your configuration in `~/.cover-me/`:
 
-- `config.yaml` - Main application settings
-- `system_prompt.md` - AI prompt template
-- `professional_info.md` - Your professional information
+- `config.yaml` - Main application settings (AI provider, output format, etc.)
+- `profile.md` - Your professional information and experience
+- `templates/` - PDF templates and customizations
 
-> Edit these files to customize the generated cover letters.
+Use these commands to manage your configuration:
+
+```bash
+cover-me configure      # Interactive configuration editor
+cover-me profile        # Edit your professional profile
+cover-me test          # Validate your configuration
+```
+
+### Advanced Configuration
+
+You can also set environment variables to override config settings:
+
+```bash
+export OPENAI_API_KEY="your-key"           # Required for OpenAI
+export ANTHROPIC_API_KEY="your-key"        # Required for Anthropic
+export COVER_ME_LLM_PROVIDER="openai"      # Override provider
+export COVER_ME_OUTPUT_DIR="~/Documents"   # Override output directory
+```
 
 ## Requirements
 

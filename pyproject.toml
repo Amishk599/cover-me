@@ -33,15 +33,12 @@ dependencies = [
 ]
 
 [project.scripts]
-cover-me = "src.main:main"
+cover-me = "cover_me.main:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/cover-me"
-Repository = "https://github.com/yourusername/cover-me"
-Issues = "https://github.com/yourusername/cover-me/issues"
-
-[tool.setuptools]
-package-dir = {"" = "src"}
+Homepage = "https://github.com/Amishk599/cover-me"
+Repository = "https://github.com/Amishk599/cover-me"
+Issues = "https://github.com/Amishk599/cover-me/issues"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+include = ["cover_me", "cover_me.*"]
